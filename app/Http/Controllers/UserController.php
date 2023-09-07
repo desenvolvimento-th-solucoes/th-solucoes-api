@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use App\Models\User;
-use Tymon\JWTAuth\Facades\JWTAuth;
 
 class UserController extends Controller
 {
@@ -18,7 +18,7 @@ class UserController extends Controller
         ]);
 
         try{    
-            $user = User::create([
+            User::create([
                 'name' => $request->input('name'),
                 'last_name' => $request->input('lastName'),
                 'email' => $request->input('email'),
@@ -36,29 +36,6 @@ class UserController extends Controller
                 'error' => $error->getMessage(),
                 'code' =>  $error->getCode()
             ]);
-        }
-    }
-
-    public function login(Request $request){
-        $this->validate($request, [
-            'email' => 'required|email',
-            'password' => 'required|min:8'
-        ]);
-
-        try{
-            $credentials = $request->only("email", "password");
-            if($token = JWTAuth::attempt($credentials)){
-                return response()->json([
-                    'token' => $token
-                ], 200);
-            }
-            return response()->json([
-                'error' => "Unauthorized"
-            ], 201);
-        } catch (QueryException $error) {
-            return response()->json([
-                'error' => 'Unauthorized'
-            ], 201);
         }
     }
 }
