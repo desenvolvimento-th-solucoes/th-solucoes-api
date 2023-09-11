@@ -18,7 +18,7 @@ class AuthController extends Controller
 
         $credentials = $request->only("email", "password");
         if($token = JWTAuth::attempt($credentials)){
-            $cookie = Cookie::make("token", $token, 1);
+            $cookie = Cookie::make("token", $token, 4320);
 
             return response()->json([
                 'message' => 'Authentication has been successful.'
