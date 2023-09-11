@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use App\Models\User;
-use Tymon\JWTAuth\Facades\JWTAuth;
 
 class UserController extends Controller
 {
@@ -18,7 +18,7 @@ class UserController extends Controller
         ]);
 
         try{    
-            $user = User::create([
+            User::create([
                 'name' => $request->input('name'),
                 'last_name' => $request->input('lastName'),
                 'email' => $request->input('email'),
