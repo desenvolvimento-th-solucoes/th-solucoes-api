@@ -32,25 +32,30 @@ class AuthController extends Controller
     }
 
     public function checkToken(Request $request) {
-        if($request->cookie("token")){
-            $token = $request->cookie("token");
-            
+        $token = $request->cookie("token");
+    
+        if ($token) {
             try {
                 JWTAuth::setToken($token);
                 $user = JWTAuth::parseToken()->authenticate();
     
-                if($user) {
+                if ($user) {
                     return response()->json([
                         "message" => "Authenticated",
                         "logged_user" => [
-                            "id" => $user["id"],
-                            "name" => $user["name"],
-                            "last_name" => $user["last_name"],
-                            "email" => $user["email"],
-                            "telephone" => $user["telephone"]
+                            "id" => $user->id,
+                            "name" => $user->name,
+                            "last_name" => $user->last_name,
+                            "email" => $user->email,
+                            "telephone" => $user->telephone
                         ]
                     ], 200);
-                } 
+                }
+    
+                return response()->json([
+                    "message" => "Not authenticated"
+                ], 401);
+    
             } catch (\Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {
                 return response()->json([
                     "message" => "Token expired"
@@ -60,12 +65,12 @@ class AuthController extends Controller
                     "message" => "Error on generating process of a Json Web Token (JWT)"
                 ], 401);
             }
-        }       
+        }
+    
         return response()->json([
             "message" => "Not authenticated"
         ], 401);
     }
-
     public function destroyToken(Request $request){
         if($request->cookie("token")) {
             $cookie = Cookie::forget("token");
