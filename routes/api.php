@@ -11,4 +11,5 @@ Route::get('/check', [AuthController::class, 'checkToken']);
 Route::middleware(['middleware' => 'jwt.api'])->group(function(){
     Route::get('/destroy', [AuthController::class, 'destroyToken']);
     Route::put('/save', [UserController::class, 'save']);
+    Route::put('/redefine', [UserController::class, 'redefine']);
 });

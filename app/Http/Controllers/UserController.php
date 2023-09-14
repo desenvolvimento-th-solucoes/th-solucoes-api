@@ -24,7 +24,7 @@ class UserController extends Controller
                 'last_name' => $request->input('lastName'),
                 'email' => $request->input('email'),
                 'telephone' =>$request->input('telephone'),
-                'password' => bcrypt($request->input('password'))
+                'password' => $request->input('password')
             ])->save();
 
             return response()->json([
@@ -47,30 +47,30 @@ class UserController extends Controller
             "last_name" => "string|nullable",
             "email" => "string|nullable",
             "telephone" => "string|nullable",
-            "password" => "string|nullable",
         ]);
 
         try {
             $user = User::find($request->input("id"));
             if ($user) {
                 $updated = [];
-                $nullable = ["id", "name", "last_name", "email", "telephone"];
-
-                if($user["password"] !== $request->input("password")) {
-                    $updated["password"] = Hash::make($request->input("password"));
-                }
+                $nullable = ["name", "last_name", "email", "telephone"];
 
                 foreach($nullable as $field){
-                    if($user[$field] !== $request->input($field) && $request->input($field) !== null){                       
-                        $updated[$field] = $request->input($field);
+                    if($request["data"][$field] !== null && $request["data"][$field] !== $user->$field) {
+                        $updated[$field] = $request["data"][$field];
                     }
                 }
 
-                User::where("id", "=", $user->id)->update($updated);
-
-                return response()->json([
-                    "message" => "User successfully updated"
-                ]);
+                if($updated !== []) {
+                    User::where("id", "=", $request["id"])->update($updated);
+                    return response()->json([
+                        "message" => "User successfully updated"
+                    ]);
+                } else {
+                    return response()->json([
+                        "message" => "Nothing to update"
+                    ]);
+                }
             }
             return response()->json([
                 "message" => "User not found."
@@ -80,5 +80,31 @@ class UserController extends Controller
                 "message" => $error->getMessage()
             ]);
         }
+    }
+
+    public function redefine(Request $request) {
+        $this->validate($request, [
+            "id" => "required|numeric",
+            "password" => "required|string|min:8"
+        ]); 
+
+        $user = User::where("id", "=", $request["id"])->first();
+
+        if($user){
+            if(!Hash::check($request["password"], $user->password)) {
+                User::where("id", "=", $user->id)->update([
+                    "password" => Hash::make($request["password"])
+                ]);
+                return response()->json([
+                    "message" => "Password redefined successfully"
+                ]);
+            }        
+            return response()->json([
+                "message" => "The password is the same"
+            ]);
+        }
+        return response()->json([
+            "message" => "An error occurred on redefinition password process"
+        ]);
     }
 }

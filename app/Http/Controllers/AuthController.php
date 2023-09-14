@@ -7,28 +7,33 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\JWTFactory;
-use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use App\Models\User;
 
 class AuthController extends Controller
 {
     public function login(Request $request){
         $this->validate($request, [
             'email' => 'required|email',
-            'password' => 'required|min:8'
+            'password' => 'required|string|min:8'
         ]);
 
         $credentials = $request->only("email", "password");
+        $user = User::where('email', $request->input('email'))->first();
 
-        if($token = JWTAuth::attempt($credentials)){
-            $cookie = Cookie::make("token", $token, 4320);
-
-            return response()->json([
-                'message' => 'Authentication has been successful.'
-            ], 201)
-            ->withCookie($cookie);
-        }
+        if ($user && Hash::check($request->input('password'), $user->password)) {
+            if($token = JWTAuth::attempt($credentials)){
+                $cookie = Cookie::make("token", $token, 4320);
     
+                return response()->json([
+                    'message' => 'Authentication has been successful.'
+                ], 201)
+                ->withCookie($cookie);
+            }
+            return response()->json([
+                'error' => "Authentication Failure."
+            ], 401);
+        }
         return response()->json([
             'error' => "Authentication Failure."
         ], 401);
