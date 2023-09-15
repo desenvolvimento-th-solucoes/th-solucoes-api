@@ -6,6 +6,8 @@ use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use App\Mail\ConfirmationMailer;
+use Illuminate\Support\Facades\Mail;
 
 class UserController extends Controller
 {

@@ -79,6 +79,7 @@ class AuthController extends Controller
             "message" => "Not authenticated"
         ], 401);
     }
+
     public function destroyToken(Request $request){
         if($request->cookie("token")) {
             $cookie = Cookie::forget("token");
