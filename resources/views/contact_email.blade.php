@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>E-mail de Contato</title>
-    <link rel="stylesheet" href="../css/email.css">
+    <link rel="stylesheet" href="http://localhost/th-solucoes-api/resources/css/email.css">
 </head>
 <body>
     <div class="container">
@@ -18,7 +18,7 @@
             <p>Aqui estão os detalhes do contato:</p>
             <ul>
                 <li>NOME: {{ $name ?? null }}</li>
-                <li>ENDEREÇIO DE E-MAIL: {{ $email ?? null }}</li>
+                <li>ENDEREÇO DE E-MAIL: {{ $email ?? null }}</li>
             </ul>
             <div class="body">
                 <p>Resumo da Mensagem: {{ $body ?? null }}</p>
