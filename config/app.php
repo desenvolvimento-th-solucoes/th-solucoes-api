@@ -55,7 +55,7 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'http://localhost'),
+    'url' => env('APP_URL', 'http://odmzus.hospedagemelastica.com.br'),
 
     'asset_url' => env('ASSET_URL'),
 
