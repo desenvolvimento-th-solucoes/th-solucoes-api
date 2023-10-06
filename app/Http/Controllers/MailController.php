@@ -11,7 +11,6 @@ class MailController extends Controller
     public function contact(Request $request){
         $this->validate($request, [
             "name" => "required|string",
-            "email" => "required|email",
             "body" => "required|string"
         ]);
 
