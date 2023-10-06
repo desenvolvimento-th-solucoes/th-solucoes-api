@@ -30,6 +30,6 @@ class ContactMailer extends Mailable
             "email" => $this->email
         ])
         ->subject("E-mail de Contato")
-        ->from($this->email, $this->name);
+        ->from("ticket@thsolucoes.com", $this->name);
     }
 }
