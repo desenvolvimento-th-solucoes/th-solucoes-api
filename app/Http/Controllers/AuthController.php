@@ -23,12 +23,15 @@ class AuthController extends Controller
 
         if ($user && Hash::check($request->input('password'), $user->password)) {
             if($token = JWTAuth::attempt($credentials)){
-                $cookie = cookie('token', $token, 60)->withPath('/')->withSecure(true)->withHttpOnly(true);
-    
+                $cookie = cookie('token', $token, 60)
+                    ->withPath('/')
+                    ->withSecure(true)
+                    ->withHttpOnly(true)
+                    ->sameSite('None');
+
                 return response()->json([
                     'message' => 'Authentication has been successful.'
-                ], 201)
-                ->withCookie($cookie);
+                ], 201)->withCookie($cookie);
             }
             return response()->json([
                 'error' => "Authentication Failure."
