@@ -32,8 +32,7 @@ class AuthController extends Controller
                     'message' => 'Authentication has been successful.'
                 ], 201)->withCookie($cookie);
 
-                $cookieHeader = $cookie->getName() . '=' . $cookie->getValue() . '; expires=' . $cookie->getExpires() . '; path=' . $cookie->getPath() . '; domain=' . $cookie->getDomain() . '; secure; HttpOnly; SameSite=None';
-                $response->headers->set('Set-Cookie', $cookieHeader);
+                $response->headers->setCookie($cookie->withSameSite('None'));
 
                 return $response;
             }
