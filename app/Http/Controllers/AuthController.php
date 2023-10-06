@@ -26,12 +26,15 @@ class AuthController extends Controller
                 $cookie = cookie('token', $token, 60)
                     ->withPath('/')
                     ->withSecure(true)
-                    ->withHttpOnly(true)
-                    ->sameSite('None');
+                    ->withHttpOnly(true);
 
-                return response()->json([
+                $response = response()->json([
                     'message' => 'Authentication has been successful.'
-                ], 201)->withCookie($cookie);
+                ], 204)->withCookie($cookie);
+
+                $response->headers->set('Set-Cookie', $cookie->toHeader() . '; SameSite=None; Secure');
+
+                return $response;
             }
             return response()->json([
                 'error' => "Authentication Failure."
