@@ -25,14 +25,15 @@ class AuthController extends Controller
             if($token = JWTAuth::attempt($credentials)){
                 $cookie = cookie('token', $token, 60)
                     ->withPath('/')
-                    ->withSecure(true)
+                    ->withSecure(true) 
                     ->withHttpOnly(true);
 
                 $response = response()->json([
                     'message' => 'Authentication has been successful.'
-                ], 204)->withCookie($cookie);
-
-                $response->headers->set('Set-Cookie', $cookie->toHeader() . '; SameSite=None; Secure');
+                ], 201)->withCookie($cookie);
+                
+                $cookieHeader = $cookie->getName() . '=' . $cookie->getValue() . '; expires=' . $cookie->getExpiresTimestamp() . '; path=' . $cookie->getPath() . '; domain=' . $cookie->getDomain() . '; secure; HttpOnly; SameSite=None';
+                $response->headers->set('Set-Cookie', $cookieHeader);
 
                 return $response;
             }
