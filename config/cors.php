@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['http://qdokcv.hospedagemelastica.com.br', 'https://thsolucoes.com'],
+    'allowed_origins' => ['http://qdokcv.hospedagemelastica.com.br', 'https://thsolucoes.com', 'http://localhost:3000'],
 
     'allowed_origins_patterns' => [],
 
