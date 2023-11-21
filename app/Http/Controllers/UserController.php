@@ -109,4 +109,25 @@ class UserController extends Controller
             "message" => "An error occurred on redefinition password process"
         ]);
     }
+
+    public function recoverAllUsers(Request $request) {
+        try {
+            $users = User::all();
+            $output = [];
+
+            foreach($users as $user) {
+                $output[] = [
+                    "id" => $user["id"],
+                    "name" => $user["name"], 
+                    "email" => $user["email"]
+                ];
+            }
+
+            return response()->json($output);
+        } catch (Exception $error) {
+            return response()->json([
+                "error" => $error
+            ]);
+        }
+    }
 }
