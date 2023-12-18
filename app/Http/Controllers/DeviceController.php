@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Device;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class DeviceController extends Controller
 {
@@ -17,9 +18,11 @@ class DeviceController extends Controller
                 $output[] = [
                     "id" => $device["id"],
                     "client_name" => $device->user["name"], 
+                    "client_email" => $device->user["email"], 
                     "device" => $device["device"],
                     "observations" => $device["observations"] ?? "Nenhuma",
                     "password" => $device["password"],
+                    "ip" => $device["ip"],
                     "updated_at" => $device["updated_at"],
                 ];
             }
@@ -27,12 +30,12 @@ class DeviceController extends Controller
             return response()->json($output);
         } catch (Exception $error) {
             return response()->json([
-                "error" => $error
+                "error" => $error->getMessage()
             ]);
         }
     }
 
-    public function assign(Request $request) {
+    public function record(Request $request) {
         $this->validate($request, [
             "email" => "required|email",
             "password" => "required|string",
@@ -42,13 +45,12 @@ class DeviceController extends Controller
         ]);
         
         try {
-            $existUserId = User::where("email", $request["email"])->pluck("id")->first();
-            
+            $existUserId = User::where("email", "=", $request["email"])->pluck("id")->first();
             if($existUserId) {
                 $createdDevice = Device::create([
                     "user_id" => $existUserId,
                     "device" => $request["device"],
-                    "observation" => $request["observation"],
+                    "observations" => $request["observations"],
                     "ip" => $request["ip"],
                     "password" => encrypt($request["password"])
                 ]);
@@ -57,35 +59,44 @@ class DeviceController extends Controller
             }
 
             return response()->json([
-                "error" => "Cannot find user with ID " . $existUserId
+                "error" => "Cannot find user with email " . $request->input("email")
             ]);
         } catch (Exception $error) {
             return response()->json([
-                "error" => $error
+                "error" => $error->getMessage()
             ]);     
         }
     }
 
     public function showPassword(Request $request) {
         $this->validate($request, [
-            "id" => "required|number",
+            "operatorId" => "required",
+            "deviceId" => "required",
             "password" => "required|string"
         ]);
 
         try {
-            $existUserId = User::where("id", "=", $request->input('id'));
-            if ($existUserId && Hash::check($request->input('password'), $existUserId["password"])) {
+            $existUserId = User::select()
+            ->where("id", "=", $request->input('operatorId'))
+            ->first();
+            if ($existUserId && Hash::check($request->input('password'), $existUserId->password)) {
+                $deviceFromDatabase = Device::where("id", "=", $request->input("deviceId"))->first();
+                if ($deviceFromDatabase) {
+                    return response()->json([
+                        "device_id" => $deviceFromDatabase->id,
+                        "password" => decrypt($deviceFromDatabase->password)
+                    ]);
+                }
                 return response()->json([
-                    "device" => $existUserId->device,
-                    "password" => decrypt($existUserId->device["password"])
-                ]);
+                    "error" => "Cannot find device with ID ". $request->input("deviceId")
+                ], 403);
             }
             return response()->json([
-                "error" => "Wrong credential "
+                "error" => "Wrong credential"
             ], 403);
         } catch (Exception $e) {
             return response()->json([
-                "error" => $error
+                "error" => $error->getMessage()
             ]);
         }
     }

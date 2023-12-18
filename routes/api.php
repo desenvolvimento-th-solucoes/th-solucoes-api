@@ -13,16 +13,17 @@ Route::middleware(['middleware' => 'jwt.api'])->group(function() {
     Route::put('/redefine', [UserController::class, 'redefine']);
 });
 
-Route::middleware(['middleware' => 'jwt.api'])->group(function() {
-});
-
-Route::get('/administrator/device/all', [DeviceController::class, "recoverAllDevices"]);
-Route::get('/administrator/user/all', [UserController::class, "recoverAllUsers"]);
-Route::post('/administrator/device/assign', [DeviceController::class, "assign"]);
-Route::post('/administrator/device/showPassword', [DeviceController::class, "showPassword"]);
-
 Route::middleware(['throttle:5,1'])->group(function() {
     Route::post('/contact', [MailController::class, 'contact']);
     Route::post('/register', [UserController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
+});
+
+Route::middleware(['throttle:20,1'])->group(function() {
+    Route::get('/administrator/device/all', [DeviceController::class, "recoverAllDevices"]);
+    Route::get('/administrator/user/all', [UserController::class, "recoverAllUsers"]);
+
+    Route::post('/administrator/device/record', [DeviceController::class, "record"]);
+    Route::post('/administrator/user/record', [UserController::class, "register"]);
+    Route::post('/administrator/device/showPassword', [DeviceController::class, "showPassword"]);
 });

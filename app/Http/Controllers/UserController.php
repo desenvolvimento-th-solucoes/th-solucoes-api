@@ -119,7 +119,9 @@ class UserController extends Controller
                 $output[] = [
                     "id" => $user["id"],
                     "name" => $user["name"], 
-                    "email" => $user["email"]
+                    "last_name" => $user["last_name"], 
+                    "email" => $user["email"],
+                    "telephone" => $user["telephone"]
                 ];
             }
 

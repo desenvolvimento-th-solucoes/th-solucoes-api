@@ -11,7 +11,7 @@ class Device extends Model
     protected $table = "low_caution_password";
 
     protected $fillable = [
-        "user_id", "device", "observations", "password"
+        "user_id", "device", "ip", "observations", "password"
     ];
 
     public function user() {
